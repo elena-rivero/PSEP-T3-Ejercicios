@@ -2,6 +2,9 @@ package ejercicio4;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,14 +13,15 @@ import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 
-public class ClienteAdivinaNumero {
+public class ClienteLeeFichero {
+
+	private static BufferedWriter bw;
+	private static BufferedReader br;
 
 	public static void main(String[] args) {
 
-		int num;
-		String acertado = "";
+		String suma;
 
 		try {
 			// 1 - Creación de socket de tipo cliente
@@ -33,21 +37,14 @@ public class ClienteAdivinaNumero {
 			// 3 - Intercambio de datos con el servidor
 			System.out.println("(Cliente): Envía el número al servidor...");
 			OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
-			BufferedWriter bw = new BufferedWriter(osw);
+			bw = new BufferedWriter(osw);
 			InputStreamReader isr = new InputStreamReader(is, "UTF-8");
-			BufferedReader br = new BufferedReader(isr);
+			br = new BufferedReader(isr);
 
-			while (!acertado.equals("IGUAL")) {
-				num = leeNumero();
-				bw.write(String.valueOf(num));
-				bw.newLine();
-				bw.flush();
-
-				System.out.println("(Cliente): Lectura del mensaje del servidor...");
-
-				acertado = br.readLine();
-				mensajeSalida(acertado);
-			}
+			leeFichero();
+			suma = br.readLine();
+			System.out.println("La suma total es: " + suma);
+			
 			// 4 - Cerrar los flujos de lectura y escritura
 			System.out.println("(Cliente): Cerramos flujo de lectura y escritura...");
 			bw.close();
@@ -70,28 +67,28 @@ public class ClienteAdivinaNumero {
 		}
 	}
 
-	public static int leeNumero() {
-		int numero;
-		Scanner sc = new Scanner(System.in);
 
-		do {
-			System.out.println("Introduzca un número:");
-//			sc.next();
-			numero = sc.nextInt();
-		} while (numero < 0 || numero > 100);
+	public static void leeFichero() {
+		String linea;
+		File fichero = new File("D:\\Servicios\\numeros.txt");
 
-		// sc.close();
-
-		return numero;
-	}
-
-	public static void mensajeSalida(String acertado) {
-		if (acertado.equals("IGUAL")) {
-			System.out.println("Ha acertado");
-		} else if (acertado.equals("MENOR")) {
-			System.out.println("El número que has introducido es menor");
-		} else {
-			System.out.println("El número que has introducido es mayor");
+		FileReader fr;
+		BufferedReader brFile;
+		try {
+			fr = new FileReader(fichero);
+			brFile = new BufferedReader(fr);
+			linea = brFile.readLine();
+			while(linea != null) {
+				bw.write(String.valueOf(linea));
+				linea = brFile.readLine();
+			}
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		
 	}
+
 }

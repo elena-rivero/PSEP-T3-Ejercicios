@@ -11,13 +11,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 
-public class ServidorAdivinaNumero {
+public class ServidorLeeFichero {
 	private final static int NUM_ALEATORIO = new Random().nextInt(0, 100);
 
 	public static void main(String[] args) {
 		int numero;
-
-		String mensaje;
+		int suma=0;
+		String leeMensaje;
 
 		try {
 			// 1 - Creación del socket servidor
@@ -41,18 +41,18 @@ public class ServidorAdivinaNumero {
 				OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
 				BufferedWriter bw = new BufferedWriter(osw);
 
-				System.out.println("Número a adivinar: " + NUM_ALEATORIO);
-				do {
-					numero = Integer.parseInt(br.readLine());
-					mensaje = compruebaNumero(numero);
-
-					System.out.println("(Servidor): Envío mensaje al cliente...");
+				leeMensaje = br.readLine();
+				while (leeMensaje != null) {
 					
-					bw.write(mensaje);
-					bw.newLine();
-					bw.flush();
+					numero = Integer.parseInt(leeMensaje);
+					suma+=numero;
 					
-				} while (numero != NUM_ALEATORIO);
+					leeMensaje = br.readLine();
+				}
+				bw.write(String.valueOf(suma));
+				bw.newLine();
+				bw.flush();
+				
 				// 5 - Cerrar flujos de lectura y escritura
 				System.out.println("(Servidor): Cierre de flujos de lectura y escritura...");
 				br.close();
